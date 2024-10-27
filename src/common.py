@@ -3,14 +3,58 @@ from os import linesep
 from typing import Any
 from socket import socket
 
-from book import Book
-from movie import Movie
-
 
 class File(Enum):
     Book = "books"
     Movie = "movies"
     Coord = "coord"
+
+
+class Item:
+    def __init__(self, file: File, name: str, quantity: float, price: float) -> None:
+        self.__file = file
+        self.__name = name
+        self.__quantity = quantity
+        self.__price = price
+        self.__tax = self.__set_tax(file)
+
+    def __set_tax(self, file: File) -> float:
+        """Set the tax based on the item type"""
+        match file:
+            case File.Book:
+                return 0.1
+            case File.Movie:
+                return 0.3
+            case _:
+                return 0.0
+
+    def get_type(self) -> File:
+        return self.__file
+
+    def get_name(self) -> str:
+        """Get the item name"""
+        return self.__name
+
+    def get_quantity(self) -> float:
+        """Get the item quantity"""
+        return self.__quantity
+
+    def get_price(self) -> float:
+        """Get the item price"""
+        return self.__price
+
+    def get_tax(self) -> float:
+        """Get the item tax"""
+        return self.__tax
+
+    def get_result(self) -> float:
+        """Get the item result"""
+        return (self.__quantity * self.__price) + (
+            (self.__quantity * self.__price) * self.__tax
+        )
+
+    def __str__(self) -> str:
+        return f"{self.__name},{self.__quantity},{self.__price}"
 
 
 class Server:
@@ -27,29 +71,24 @@ class Server:
         self.SERVER.listen(self.__CONNECTIONS)
 
         """List of existing items on the server"""
-        self.__data: list[Book | Movie] = (
-            self.get_file(file) if file.value != "coord" else []
-        )
+        self.__data: list[Item] = self.get_file(file) if file.value != "coord" else []
         print(f"Listening on {self.__ADDRESS}:{self.__PORT}")
 
-    def get_file(self, file: File) -> list[Book | Movie]:
+    def get_file(self, file: File) -> list[Item]:
         """Read file and return list"""
         f: Any = open(f"data/{file.value}.csv")
-        data: list[Book | Movie] = []
+        data: list[Item] = []
         for i in f:
             d: list[str] = i.split(",")
-            match file:
-                case File.Book:
-                    data.append(Book(d[0], float(d[1]), float(d[2])))
-                case File.Movie:
-                    data.append(Movie(d[0], float(d[1]), float(d[2])))
+            if file != File.Coord:
+                data.append(Item(file, d[0], float(d[1]), float(d[2])))
         return data
 
-    def save_file(self, file: File, item: Book | Movie) -> bool:
+    def save_file(self, item: Item) -> bool:
         """Save data to disk"""
         try:
             self.__data.append(item)
-            f: Any = open(f"data/{file.value}.csv", "w")
+            f: Any = open(f"data/{item.get_type().value}.csv", "w")
             for d in self.__data:
                 f.write(d.__str__() + linesep)
             return True

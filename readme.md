@@ -1,6 +1,6 @@
 run server(s) with:
 
-    python3 book_server.py
-    python3 movie_server.py
-    python3 server_coordinator.py
-    python3 client.py
+    python3 src/book_server.py
+    python3 src/movie_server.py
+    python3 src/server_coordinator.py
+    python3 src/client.py

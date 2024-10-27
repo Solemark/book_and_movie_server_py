@@ -1,6 +1,4 @@
-from movie import Movie
-
-from common import Server, File
+from common import Server, File, Item
 
 
 class MovieServer(Server):
@@ -16,10 +14,8 @@ class MovieServer(Server):
             sock, addr = self.SERVER.accept()
             print(f"Incoming message from {addr}")
 
-            m: list[str] = sock.recv(1024).decode().split(",")
-            res: bool = self.save_file(
-                File.Movie, Movie(m[0], float(m[1]), float(m[2]))
-            )
+            i: list[str] = sock.recv(1024).decode().split(",")
+            res: bool = self.save_file(Item(File.Movie, i[0], float(i[1]), float(i[2])))
 
             sock.send(
                 "Book saved successfully!".encode()

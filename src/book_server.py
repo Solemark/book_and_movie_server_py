@@ -1,6 +1,4 @@
-from book import Book
-
-from common import Server, File
+from common import Server, File, Item
 
 
 class BookServer(Server):
@@ -16,8 +14,8 @@ class BookServer(Server):
             sock, addr = self.SERVER.accept()
             print(f"Incoming message from {addr}")
 
-            b: list[str] = sock.recv(1024).decode().split(",")
-            res: bool = self.save_file(File.Book, Book(b[0], float(b[1]), float(b[2])))
+            i: list[str] = sock.recv(1024).decode().split(",")
+            res: bool = self.save_file(Item(File.Book, i[0], float(i[1]), float(i[2])))
 
             sock.send(
                 "Book saved successfully!".encode()
