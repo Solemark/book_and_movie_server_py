@@ -29,6 +29,7 @@ class Item:
                 return 0.0
 
     def get_type(self) -> File:
+        """Get the item type"""
         return self.__file
 
     def get_name(self) -> str:
