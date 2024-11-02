@@ -12,11 +12,11 @@ class File(Enum):
 
 class Item:
     def __init__(self, file: File, name: str, quantity: float, price: float) -> None:
-        self.__file = file
-        self.__name = name
-        self.__quantity = quantity
-        self.__price = price
-        self.__tax = self.__set_tax(file)
+        self.__file: File = file
+        self.__name: str = name
+        self.__quantity: float = float(quantity)
+        self.__price: float = float(price)
+        self.__tax: float = self.__set_tax(file)
 
     def __set_tax(self, file: File) -> float:
         """Set the tax based on the item type"""
